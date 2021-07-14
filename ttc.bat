@@ -60,9 +60,14 @@ exit /B 0
 
 :time_fix
 set _time=%~1
-if "%_time:~0,1%"==" " set %~2=0%_time:~1%
-if "%_time:~1,1%"==":" set %~2=0%_time%
-if "%~3"=="1" set %~2=0%_time:~0,7%
+if not "%_time:~0,1%"==" " (
+	set %~2=%_time%
+	if "%~3"=="1" set %~2=%_time:~0,8%
+) else (
+	if "%_time:~0,1%"==" " set %~2=0%_time:~1%
+	if "%_time:~1,1%"==":" set %~2=0%_time%
+	if "%~3"=="1" set %~2=0%_time:~0,7%
+)
 exit /B 0
 
 
@@ -164,8 +169,7 @@ if "%delay%"=="" set /a delay=2
 set theme=""
 
 :main_loop
-CALL :time_fix %time% time_fixed
-
+CALL :time_fix %time% time_fixed 1
 CALL :is_time_bigger %time_fixed% %light_time% res
 if %res% equ 0 (
 	rem echo Less than light
